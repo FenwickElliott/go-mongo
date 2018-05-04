@@ -24,10 +24,13 @@ func main() {
 
 	c = session.DB("test").C("points")
 
-	err = insert(Point{"ghi789", "picnics"})
+	err = insert(Point{"abc123", "hullabaloo"})
 	check(err)
 
-	err = searchUuid("ghi789")
+	err = searchUuid("abc123")
+	check(err)
+
+	err = remove("abc123")
 	check(err)
 }
 
@@ -40,6 +43,11 @@ func searchUuid(uuid string) error {
 
 func insert(p Point) error {
 	err = c.Insert(&p)
+	return err
+}
+
+func remove(uuid string) error {
+	err = c.Remove(bson.M{"uuid": uuid})
 	return err
 }
 
