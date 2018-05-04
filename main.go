@@ -12,26 +12,31 @@ type Point struct {
 	Interests string
 }
 
-var err error
+var (
+	err error
+	c   *mgo.Collection
+)
 
 func main() {
 	session, err := mgo.Dial("127.0.0.1")
 	check(err)
 	defer session.Close()
 
-	c := session.DB("test").C("points")
+	c = session.DB("test").C("points")
 
-	// err = c.Insert(&Point{"abc123", "golfing"})
-	// check(err)
-
-	// err = c.Insert(&Point{"def546", "do-hicky-ing"})
-	// check(err)
-
-	res := Point{}
-	err = c.Find(bson.M{"uuid": "abc123"}).One(&res)
+	err = searchUuid("def546")
 	check(err)
+}
+
+func searchUuid(uuid string) error {
+	res := Point{}
+	err = c.Find(bson.M{"uuid": uuid}).One(&res)
+	if err != nil {
+		return err
+	}
 
 	fmt.Println(res)
+	return nil
 }
 
 func check(err error) {
