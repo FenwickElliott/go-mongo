@@ -8,7 +8,7 @@ import (
 )
 
 type Point struct {
-	Uuid      string
+	UID       string
 	Interests string
 }
 
@@ -27,16 +27,16 @@ func main() {
 	err = insert(Point{"abc123", "hullabaloo"})
 	check(err)
 
-	err = searchUuid("abc123")
+	err = find("abc123")
 	check(err)
 
 	err = remove("abc123")
 	check(err)
 }
 
-func searchUuid(uuid string) error {
+func find(uID string) error {
 	res := Point{}
-	err = c.Find(bson.M{"uuid": uuid}).One(&res)
+	err = c.Find(bson.M{"uid": uID}).One(&res)
 	fmt.Println(res)
 	return err
 }
@@ -46,8 +46,8 @@ func insert(p Point) error {
 	return err
 }
 
-func remove(uuid string) error {
-	err = c.Remove(bson.M{"uuid": uuid})
+func remove(uID string) error {
+	err = c.Remove(bson.M{"uid": uID})
 	return err
 }
 
