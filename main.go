@@ -1,7 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
+	"io"
+	"net/http"
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -21,34 +23,23 @@ func main() {
 	session, err := mgo.Dial("127.0.0.1")
 	check(err)
 	defer session.Close()
-
 	c = session.DB("test").C("points")
 
-	err = insert(Point{"abc123", "hullabaloo"})
-	check(err)
-
-	err = find("abc123")
-	check(err)
-
-	err = remove("abc123")
-	check(err)
+	// http.HandleFunc("/insert", insert)
+	http.HandleFunc("/find", find)
+	// http.HandleFunc("/remove", remove)
+	http.ListenAndServe(":7412", nil)
 }
 
-func find(uID string) error {
+func find(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	uID := r.FormValue("uid")
 	res := Point{}
 	err = c.Find(bson.M{"uid": uID}).One(&res)
-	fmt.Println(res)
-	return err
-}
-
-func insert(p Point) error {
-	err = c.Insert(&p)
-	return err
-}
-
-func remove(uID string) error {
-	err = c.Remove(bson.M{"uid": uID})
-	return err
+	check(err)
+	resJSON, err := json.Marshal(res)
+	check(err)
+	io.WriteString(w, string(resJSON))
 }
 
 func check(err error) {
