@@ -36,7 +36,7 @@ func insert(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	err := c.Insert(Point{r.FormValue("uid"), r.FormValue("interests")})
 	check(err)
-	io.WriteString(w, "Successfully inserted "+r.FormValue("uid"))
+	io.WriteString(w, "Successfully inserted "+r.FormValue("uid")+"\n")
 }
 
 func find(w http.ResponseWriter, r *http.Request) {
@@ -47,14 +47,14 @@ func find(w http.ResponseWriter, r *http.Request) {
 	check(err)
 	resJSON, err := json.Marshal(res)
 	check(err)
-	io.WriteString(w, string(resJSON))
+	io.WriteString(w, string(resJSON)+"\n")
 }
 
 func remove(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	err = c.Remove(bson.M{"uid": r.FormValue("uid")})
 	check(err)
-	io.WriteString(w, "Successfully removed "+r.FormValue("uid"))
+	io.WriteString(w, "Successfully removed "+r.FormValue("uid")+"\n")
 }
 
 func check(err error) {
