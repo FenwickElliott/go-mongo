@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 
 	"gopkg.in/mgo.v2"
@@ -25,10 +26,17 @@ func main() {
 	defer session.Close()
 	c = session.DB("test").C("points")
 
-	// http.HandleFunc("/insert", insert)
+	http.HandleFunc("/insert", insert)
 	http.HandleFunc("/find", find)
 	// http.HandleFunc("/remove", remove)
-	http.ListenAndServe(":7412", nil)
+	log.Fatal(http.ListenAndServe(":7412", nil))
+}
+
+func insert(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	err := c.Insert(Point{r.FormValue("uid"), r.FormValue("interests")})
+	check(err)
+	io.WriteString(w, "Successfully inserted "+r.FormValue("uid"))
 }
 
 func find(w http.ResponseWriter, r *http.Request) {
