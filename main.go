@@ -41,9 +41,8 @@ func insert(w http.ResponseWriter, r *http.Request) {
 
 func find(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	uID := r.FormValue("uid")
 	res := Point{}
-	err = c.Find(bson.M{"uid": uID}).One(&res)
+	err = c.Find(bson.M{"uid": r.FormValue("uid")}).One(&res)
 	check(err)
 	resJSON, err := json.Marshal(res)
 	check(err)
