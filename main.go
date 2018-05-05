@@ -28,7 +28,7 @@ func main() {
 
 	http.HandleFunc("/insert", insert)
 	http.HandleFunc("/find", find)
-	// http.HandleFunc("/remove", remove)
+	http.HandleFunc("/remove", remove)
 	log.Fatal(http.ListenAndServe(":7412", nil))
 }
 
@@ -48,6 +48,13 @@ func find(w http.ResponseWriter, r *http.Request) {
 	resJSON, err := json.Marshal(res)
 	check(err)
 	io.WriteString(w, string(resJSON))
+}
+
+func remove(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	err = c.Remove(bson.M{"uid": r.FormValue("uid")})
+	check(err)
+	io.WriteString(w, "Successfully removed "+r.FormValue("uid"))
 }
 
 func check(err error) {
